@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Geoanalizė — Pasiūlymas ir modulių planas</title>
+<style>
+  :root {
+    --bg: #f6f8fb;
+    --surface: #ffffff;
+    --soft: #f2f5f9;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --muted: #64748b;
+    --line: rgba(15, 23, 42, 0.08);
+    --line-strong: rgba(15, 23, 42, 0.16);
+    --accent: #2563eb;
+    --iso: #4f46e5;
+    --ok: #059669;
+    --shadow: 0 12px 30px -12px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+    --shadow-on: 0 18px 40px -14px rgba(37, 99, 235, 0.22), 0 4px 12px rgba(15, 23, 42, 0.06);
+    --r: 18px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .atmo {
+    background:
+      radial-gradient(60% 42% at 12% 0%, rgba(191, 219, 254, 0.5), transparent 70%),
+      radial-gradient(48% 38% at 88% 4%, rgba(167, 243, 208, 0.34), transparent 68%),
+      var(--bg);
+    min-height: 100vh;
+    padding-bottom: 112px;
+  }
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    background: rgba(246, 248, 251, 0.88);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-in {
+    max-width: 1180px; margin: 0 auto; padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 11px; }
+  .brand-logo-img { height: 32px; width: auto; max-width: 96px; object-fit: contain; display: block; }
+  .logo {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px;
+  }
+  .brand-name { font-weight: 660; font-size: 15px; letter-spacing: -0.015em; }
+  .btn-ghost {
+    border: 1px solid var(--line-strong); background: #fff; color: var(--ink-2);
+    padding: 6px 12px; border-radius: 999px; font: 550 13px/1 inherit; cursor: pointer;
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 34px 24px 20px; }
+  h1 { margin: 0; font-size: 31px; line-height: 1.15; letter-spacing: -0.03em; font-weight: 700; }
+  .lead { margin: 8px 0 26px; color: var(--ink-2); font-size: 16px; max-width: 780px; }
+
+  /* Two Main Blocks */
+  .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-bottom: 34px; }
+  .hero-card {
+    background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow);
+    padding: 24px 26px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px;
+    border: 1.5px solid var(--line); transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .hero-card.is-lab { border-color: rgba(37, 99, 235, 0.24); }
+  .hero-card.is-iso { border-color: rgba(79, 70, 229, 0.22); }
+  .hero-card.is-on { border-color: var(--iso); box-shadow: var(--shadow-on); }
+
+  .kicker { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 650; letter-spacing: 0.01em; margin-bottom: 6px; }
+  .k-lab { color: var(--accent); }
+  .k-iso { color: var(--iso); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .hero-card h2 { margin: 0 0 8px; font-size: 21px; letter-spacing: -0.02em; font-weight: 680; }
+  .hero-sub { margin: 0 0 14px; font-size: 13.5px; color: var(--muted); }
+
+  .pts { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; font-size: 14px; color: var(--ink-2); }
+  .pts li { display: flex; align-items: flex-start; gap: 9px; line-height: 1.45; }
+  .chk { color: var(--ok); font-weight: 700; font-size: 14px; margin-top: 1px; flex-shrink: 0; }
+
+  /* Selectable 4 ISO Core rows inside Card 2 */
+  .iso-list { display: grid; gap: 8px; }
+  .iso-item {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    padding: 10px 12px; border-radius: 12px; background: var(--soft);
+    border: 1.5px solid transparent; cursor: pointer; transition: border-color 0.14s, background 0.14s;
+  }
+  .iso-item:hover { border-color: rgba(79, 70, 229, 0.3); }
+  .iso-item.is-on { background: rgba(79, 70, 229, 0.06); border-color: rgba(79, 70, 229, 0.45); }
+  .iso-item-left { display: flex; align-items: flex-start; gap: 9px; }
+  .iso-box {
+    width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--line-strong);
+    background: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700;
+    color: #fff; margin-top: 2px; flex-shrink: 0;
+  }
+  .iso-item.is-on .iso-box { background: var(--iso); border-color: var(--iso); }
+  .iso-item strong { display: block; font-size: 14px; color: var(--ink); line-height: 1.3; }
+  .iso-item span { display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.35; }
+  .iso-pr { font-size: 13.5px; font-weight: 680; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+  .foot-bar {
+    background: var(--soft); border-radius: 12px; padding: 13px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .meta-line { font-size: 13px; color: var(--muted); }
+  .price-num { font-size: 21px; font-weight: 720; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 6px; }
+  .bundle-badge {
+    font-size: 12px; font-weight: 620; color: var(--ok);
+    background: rgba(5, 150, 105, 0.1); padding: 3px 8px; border-radius: 999px;
+  }
+  .inp {
+    width: 88px; font: 700 17px/1.1 inherit; font-variant-numeric: tabular-nums;
+    padding: 5px 8px; border-radius: 8px; border: 1.5px solid var(--accent); background: #fff; color: var(--ink);
+  }
+  .inp-sm {
+    width: 78px; font: 650 15px/1.1 inherit; font-variant-numeric: tabular-nums;
+    padding: 4px 7px; border-radius: 8px; border: 1.5px solid var(--accent); background: #fff; color: var(--ink); text-align: right;
+  }
+
+  /* 6 Optional Paid Add-Ons (NOT in Base ISO) */
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 14px; }
+  .sec-title { margin: 0; font-size: 19px; font-weight: 680; letter-spacing: -0.02em; }
+  .sec-note { font-size: 13.5px; color: var(--muted); }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 30px; }
+  .card {
+    background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow);
+    border: 1.5px solid transparent; padding: 20px 22px;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
+    cursor: pointer; transition: transform 0.14s, border-color 0.14s, box-shadow 0.14s;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .card.is-on { border-color: var(--accent); box-shadow: var(--shadow-on); }
+  .card-tag { font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .card h3 { margin: 0 0 6px; font-size: 17px; font-weight: 660; letter-spacing: -0.015em; }
+  .card-sub { margin: 0 0 12px; font-size: 13.5px; color: var(--muted); }
+  .mini-pts { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; font-size: 13.5px; color: var(--ink-2); }
+  .mini-pts li::before { content: "• "; color: var(--accent); font-weight: 700; }
+
+  .card-foot {
+    border-top: 1px solid var(--line); padding-top: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .pick-pill {
+    border: 1px solid var(--line-strong); background: #fff; color: var(--ink-2);
+    padding: 6px 13px; border-radius: 999px; font: 580 12.5px/1 inherit; cursor: pointer;
+  }
+  .card.is-on .pick-pill, .pick-pill.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .pick-pill.is-iso-on { background: var(--iso); border-color: var(--iso); color: #fff; }
+
+  /* Future Projects & Simple Boundaries Row */
+  .bottom-pair { display: grid; grid-template-columns: 1.15fr 1fr; gap: 18px; }
+  .panel {
+    background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow);
+    padding: 20px 22px;
+  }
+  .panel h3 { margin: 0 0 12px; font-size: 16px; font-weight: 660; }
+  .chips { display: grid; gap: 10px; }
+  .chip {
+    background: var(--soft); border: 1px solid var(--line); border-radius: 12px;
+    padding: 11px 14px;
+  }
+  .chip-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .chip-title { font-size: 14px; font-weight: 620; color: var(--ink); }
+  .chip-price { font-size: 12.5px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .chip-desc { font-size: 13px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+  /* Sticky Bottom Bar */
+  .tray {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    background: rgba(15, 23, 42, 0.94); color: #f8fafc;
+    backdrop-filter: blur(18px); border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  .tray-in {
+    max-width: 1180px; margin: 0 auto; padding: 13px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .stats { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .st { display: flex; flex-direction: column; }
+  .st span { font-size: 11.5px; color: #94a3b8; }
+  .st b { font-size: 18px; font-variant-numeric: tabular-nums; }
+  .st b.blue { color: #60a5fa; }
+  .st b.green { color: #34d399; }
+  .tray-save { font-size: 12px; color: #34d399; font-weight: 560; }
+  .btn-main { background: #2563eb; color: #fff; border: 0; padding: 9px 16px; border-radius: 10px; font: 600 13.5px/1 inherit; cursor: pointer; }
+  .btn-clear { background: rgba(255,255,255,0.08); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.16); padding: 9px 13px; border-radius: 10px; font: 550 13px/1 inherit; cursor: pointer; }
+
+  dialog { border: 0; border-radius: 18px; padding: 0; max-width: 640px; width: calc(100% - 32px); box-shadow: 0 28px 64px rgba(15,23,42,0.28); }
+  dialog::backdrop { background: rgba(15,23,42,0.42); backdrop-filter: blur(4px); }
+  .m-head { padding: 18px 22px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+  .m-head h2 { margin: 0; font-size: 17px; }
+  .m-body { padding: 18px 22px; max-height: 68vh; overflow: auto; }
+  .m-pre { background: var(--soft); border-radius: 12px; padding: 14px; font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; margin: 0; }
+  .m-foot { padding: 14px 22px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 10px; }
+
+  @media (max-width: 960px) { .grid-3, .pair, .bottom-pair { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .wrap, .topbar-in, .tray-in { padding-left: 16px; padding-right: 16px; } h1 { font-size: 25px; } }
+
+  @media print {
+    .topbar, .tray, .pick-pill, #btnReset, #btnPrint { display: none !important; }
+    .atmo { background: #fff !important; padding-bottom: 0 !important; }
+    .wrap { padding: 10px 0 !important; max-width: 100% !important; }
+    .hero-card, .card, .panel { box-shadow: none !important; border: 1px solid #cbd5e1 !important; break-inside: avoid; }
+    .inp, .inp-sm { border: 0 !important; padding: 0 !important; background: transparent !important; width: auto !important; }
+  }
+</style>
+<script>window.__GEOLAB_BRAND__={"name": "Geoanalizė", "subtitle": "Gruntų tyrimų laboratorija", "logoDataUrl": "data:image/png;base64,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", "catalogTitle": "Geoanalizė — Pasiūlymas ir modulių planas"};</script>
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+<div class="atmo">
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand" id="brandSlot">
+        <div class="logo" id="brandMark">GL</div>
+        <div class="brand-name" id="brandName">GeoLab · Siūlomi sprendimai</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span class="meta-line">Vienkartinės kainos (be PVM)</span>
+        <button type="button" class="btn-ghost" id="btnPrint" onclick="window.print()">Spausdinti / PDF</button>
+        <button type="button" class="btn-ghost" id="btnReset">Atkurti kainas</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Viskas vienoje vietoje — be rankinio perrašinėjimo</h1>
+    <p class="lead">Duomenys keliauja tiesiai nuo užsakymo ir svarstyklių į jūsų esamą Excel protokolą. Klaidų — gerokai mažiau, o kokybės modulius galite pridėti kartu arba vėliau.</p>
+
+    <!-- TWO MAIN STARTING BLOCKS -->
+    <section class="pair">
+      <!-- 1. BASE LAB -->
+      <article class="hero-card is-lab">
+        <div>
+          <div class="kicker k-lab"><span class="dot"></span> 1 ETAPAS · BAZINĖ LABORATORIJOS SISTEMA</div>
+          <h2>Kasdienis darbas be rankinių žurnalų</h2>
+          <p class="hero-sub">Viskas valdoma vienoje programoje, o jūsų patvirtintas Excel šablonas su grafikais lieka toks pat.</p>
+          <ul class="pts">
+            <li><span class="chk">✓</span> <span><strong>Užsakymas įkeliamas 1 kartą:</strong> visi mėginiai, gyliai ir užsakymų darbų lenta sukuriami automatiškai.</span></li>
+            <li><span class="chk">✓</span> <span><strong>Skaitmeniniai svėrimų žurnalai (Nr. 1, 2 ir 4):</strong> svoris iš svarstyklių (USB) patenka prie tikslaus mėginio ir indelio.</span></li>
+            <li><span class="chk">✓</span> <span><strong>Automatinis perkėlimas į jūsų Excel („OneDrive“):</strong> pildome tik įvesties langelius — jūsų formulės ir grafikai lieka nepaliesti.</span></li>
+            <li><span class="chk">✓</span> <span><strong>Automatinė patikra prieš išduodant protokolą:</strong> perspėja apie svėrimų šuolius, nesutampančias datas ar likusius senų darbų duomenis.</span></li>
+            <li><span class="chk">✓</span> <span><strong>Prietaisai, istorija ir patikra:</strong> matoma, kas ir kuriomis svarstyklėmis svėrė + patikrinimas su tikrais užsakymais.</span></li>
+          </ul>
+        </div>
+        <div class="foot-bar">
+          <div class="price-num">
+            <input type="number" id="baseInp" class="inp" step="100" min="0" value="6500">
+            <span>€</span>
+            <span class="meta-line">be PVM · ~3–5 sav.</span>
+          </div>
+          <span class="kicker k-lab" style="margin:0;">Pagrindas</span>
+        </div>
+      </article>
+
+      <!-- 2. BASE ISO PACK (4 CORE MODULES — PICK ALL AS BUNDLE OR INDIVIDUALLY) -->
+      <article class="hero-card is-iso" id="isoCard">
+        <div>
+          <div class="kicker k-iso"><span class="dot"></span> 2 ETAPAS · BAZINIS ISO PAKETAS (4 PAGRINDINIAI MODULIAI)</div>
+          <h2>Kokybės dokumentų tvarka be kopijavimo</h2>
+          <p class="hero-sub">Galima imti visą 4 modulių paketą kartu (pigiau) arba pasirinkti tik tuos, kurie šiandien skauda labiausiai:</p>
+          <div class="iso-list" id="isoCoreList"></div>
+        </div>
+        <div class="foot-bar">
+          <div class="price-num" style="flex-wrap:wrap;">
+            <span id="isoTotalDisplay">3 900 €</span>
+            <span class="meta-line">be PVM</span>
+            <span class="bundle-badge" id="isoBundleBadge">Paketo kaina (sutaupote 750 €)</span>
+          </div>
+          <button type="button" class="pick-pill" id="btnPickIsoAll">Pridėti visą ISO paketą</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- EXTRA OPTIONAL PAID ADD-ONS (SEPARATE FROM BASE ISO) -->
+    <div class="sec-head">
+      <h2 class="sec-title">Papildomi priedai vėliau (neįeina į bazinį ISO paketą)</h2>
+      <span class="sec-note">Prijungiama bet kada vėliau — tik tai, kas realiai atsiperka.</span>
+    </div>
+    <section class="grid-3" id="grid"></section>
+
+    <!-- FUTURE SEPARATE PROJECTS & SIMPLE BOUNDARIES -->
+    <section class="bottom-pair">
+      <div class="panel">
+        <h3>Atskiri ateities projektai (ne 1-am etapui)</h3>
+        <div class="chips">
+          <div class="chip">
+            <div class="chip-top">
+              <span class="chip-title">Klientų savitarnos portalas</span>
+              <span class="chip-price">atskiras projektas · nuo 4 900 €</span>
+            </div>
+            <div class="chip-desc">Išorinė paskyra, kur užsakovai patys prisijungia įkelti paraiškų ir atsisiųsti gatavų PDF protokolų.</div>
+          </div>
+          <div class="chip">
+            <div class="chip-top">
+              <span class="chip-title">Visiškas PDF protokolų generavimas be Excel</span>
+              <span class="chip-price">atskiras projektas · nuo 3 500 €</span>
+            </div>
+            <div class="chip-desc">Jei ateityje nuspręstumėte atsisakyti savo Excel šablono ir visus grafikus bei PDF kurti tiesiai programoje.</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Svarbu žinoti nuo pradžių</h3>
+        <ul class="pts" style="font-size:13.5px;">
+          <li><span class="chk">•</span> <span><strong>Mažiau žmogiškų klaidų:</strong> skaičiai nebeperrašomi 2 kartus, o programa prieš išduodant perspėja apie neatitikimus.</span></li>
+          <li><span class="chk">•</span> <span><strong>Jūsų Excel lieka jūsų:</strong> patvirtintų skaičiuoklių formulių nekeičiame — tik saugiai užpildome pradinius duomenis.</span></li>
+          <li><span class="chk">•</span> <span><strong>Galutinius sprendimus tvirtina vadovas:</strong> sistema paruošia tvarką, primena datas ir surenka įrodymus auditui.</span></li>
+          <li><span class="chk">•</span> <span><strong>Aiškios vienkartinės kainos:</strong> be PVM, be privalomų mėnesinių prenumeratų.</span></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Sticky Summary Tray -->
+<div class="tray">
+  <div class="tray-in">
+    <div class="stats">
+      <div class="st"><span>Bazinė sistema</span><b id="tBase">6 500 €</b></div>
+      <div class="st"><span>ISO / priedai (<span id="tCount">0</span>)</span><b class="blue" id="tExtra">0 €</b></div>
+      <div class="st">
+        <span>Iš viso (vienkartinė, be PVM)</span>
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+          <b class="green" id="tTotal">6 500 €</b>
+          <span class="tray-save" id="tSave"></span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button type="button" class="btn-clear" id="btnClear">Išvalyti</button>
+      <button type="button" class="btn-main" id="btnOpen">Suvestinė →</button>
+    </div>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <div class="m-head">
+    <h2>Pasirinkimų suvestinė</h2>
+    <button type="button" class="btn-ghost" id="btnClose">Uždaryti</button>
+  </div>
+  <div class="m-body"><pre class="m-pre" id="mPre"></pre></div>
+  <div class="m-foot">
+    <button type="button" class="btn-ghost" id="btnCopy">Kopijuoti</button>
+    <button type="button" class="btn-main" id="btnOk">Gerai</button>
+  </div>
+</dialog>
+
+<script>
+const KEY = "geolab_catalog_clean_v6";
+
+const ISO_CORE = [
+  {
+    id: "iso_f5",
+    title: "5 aplankas — tiekėjų vertinimas",
+    desc: "Atskiria tyrimams svarbius tiekėjus nuo ūkinių pirkimų, nebekopijuoja metų, pats suskaičiuoja balą ir sprendimą.",
+    price: 1900
+  },
+  {
+    id: "iso_cal",
+    title: "Prietaisų kalibravimas ir terminai",
+    desc: "Viena švari lentelė, priminimai 60/30/7 d. prieš terminą, ryšys kurios svarstyklės naudotos bandyme.",
+    price: 950
+  },
+  {
+    id: "iso_staff",
+    title: "Darbuotojų leidimai ir mokymai",
+    desc: "Iškart matosi, kas šiandien turi teisę atlikti konkretų bandymą + 5 m. stebėsenos priminimai.",
+    price: 850
+  },
+  {
+    id: "iso_docs",
+    title: "Dokumentų ir Excel registras",
+    desc: "Peržiūros priminimai, apsauga nuo pasenusio Excel šablono, paruoštas metinis skaičiuoklių patikrinimas.",
+    price: 950
+  }
+];
+const ISO_BUNDLE_PRICE = 3900;
+const COMBINED_DISCOUNT = 500; // 6500 + 3900 = 10400 -> 9900 € when Base + Full ISO Pack chosen together
+
+const ADDONS = [
+  {
+    id: "issues",
+    tag: "Kokybė · Priedas",
+    cls: "k-iso",
+    title: "Klaidos ir skundai",
+    sub: "Neatitiktys ir klientų pastabos vienoje vietoje.",
+    pts: ["Klaidos ar skundo kortelė su terminu", "Atsakingas žmogus ir pataisymo įrodymas", "Tvarkinga istorija auditui"],
+    price: 1600,
+    time: "1–2 sav."
+  },
+  {
+    id: "annual",
+    tag: "Kokybė · Priedas",
+    cls: "k-iso",
+    title: "Metinė ataskaita vadovybei",
+    sub: "Metų skaičiai paruošiami vienu mygtuku.",
+    pts: ["Tiekėjų, kalibravimų ir klaidų suvestinė", "Vidaus auditų kalendorius", "Sutaupo kelias dienas metų gale"],
+    price: 950,
+    time: "3–5 d. d."
+  },
+  {
+    id: "more_methods",
+    tag: "Laboratorija · Priedas",
+    cls: "k-lab",
+    title: "Papildomi tyrimų žurnalai",
+    sub: "Prijungiame kitus jūsų bandymų metodus.",
+    pts: ["Paprastas žurnalas (pvz., kaitinimo nuostoliai)", "Tas pats patogus duomenų perdavimas į Excel", "Patikra su tikrais užsakymais"],
+    price: 1100,
+    prefix: "nuo ",
+    time: "2–5 d. d."
+  },
+  {
+    id: "other_devices",
+    tag: "Laboratorija · Priedas",
+    cls: "k-lab",
+    title: "Kiti prietaisai (ne svarstyklės)",
+    sub: "Lazerinių ar mechaninių įrenginių failų importas.",
+    pts: ["Automatinis įrenginio eksporto nuskaitymas", "Mažiau rankinio kopijavimo į priedus", "Tiksli kaina po įrenginio failų peržiūros"],
+    price: 1500,
+    prefix: "nuo ",
+    time: "po apžiūros"
+  },
+  {
+    id: "v1v2",
+    tag: "Laboratorija · Priedas",
+    cls: "k-lab",
+    title: "Pilna protokolų pataisų eiga (V1/V2)",
+    sub: "Formalus jau išduoto protokolo pataisymas.",
+    pts: ["Sena versija V1 užrakinama, niekada neištrinama", "Privaloma keitimo priežastis ir vadovo tvirtinimas", "Aiškus pėdsakas, kas ir kodėl keitėsi"],
+    price: 950,
+    time: "3–5 d. d."
+  },
+  {
+    id: "quick_wins",
+    tag: "Greiti patogumai",
+    cls: "k-lab",
+    title: "Smulkūs kasdieniai patobulinimai",
+    sub: "Maži priedai po paleidimo (kaina už 1 vnt.).",
+    pts: ["QR lipdukai mėginių indeliams", "Automatiniai el. pašto priminimai", "Patalpų temperatūros / drėgmės žurnalas"],
+    price: 350,
+    prefix: "po ",
+    time: "1 d. d."
+  }
+];
+
+function defaults() {
+  return {
+    base: 6500,
+    isoPicks: {},
+    addonPicks: {},
+    addonPrices: Object.fromEntries(ADDONS.map(m => [m.id, m.price]))
+  };
+}
+
+let state = (() => {
+  try { const r = localStorage.getItem(KEY); if (r) return { ...defaults(), ...JSON.parse(r) }; } catch {}
+  return defaults();
+})();
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+const eur = n => Number(n || 0).toLocaleString("lt-LT").replace(/,/g, " ") + " €";
+
+function calcIso() {
+  const picked = ISO_CORE.filter(x => state.isoPicks[x.id]);
+  const all4 = picked.length === ISO_CORE.length;
+  const rawSum = picked.reduce((s, x) => s + x.price, 0);
+  const price = all4 ? ISO_BUNDLE_PRICE : rawSum;
+  return { picked, all4, rawSum, price };
+}
+
+function render() {
+  const bInp = document.getElementById("baseInp");
+  if (document.activeElement !== bInp) bInp.value = state.base;
+
+  const iso = calcIso();
+  document.getElementById("isoCard").classList.toggle("is-on", iso.picked.length > 0);
+
+  document.getElementById("isoCoreList").innerHTML = ISO_CORE.map(item => {
+    const on = !!state.isoPicks[item.id];
+    return `
+      <div class="iso-item ${on ? "is-on" : ""}" data-iso="${item.id}">
+        <div class="iso-item-left">
+          <div class="iso-box">${on ? "✓" : ""}</div>
+          <div>
+            <strong>${item.title}</strong>
+            <span>${item.desc}</span>
+          </div>
+        </div>
+        <div class="iso-pr">${eur(item.price)}</div>
+      </div>
+    `;
+  }).join("");
+
+  const isoDisplay = document.getElementById("isoTotalDisplay");
+  const isoBadge = document.getElementById("isoBundleBadge");
+  if (iso.picked.length === 0 || iso.all4) {
+    isoDisplay.textContent = eur(ISO_BUNDLE_PRICE);
+    isoBadge.style.display = "inline-block";
+    isoBadge.textContent = "4 modulių paketas (vietoje 4 650 €)";
+  } else {
+    isoDisplay.textContent = eur(iso.price);
+    isoBadge.style.display = "inline-block";
+    isoBadge.textContent = `Pasirinkta ${iso.picked.length} iš 4`;
+  }
+
+  const btnAll = document.getElementById("btnPickIsoAll");
+  btnAll.classList.toggle("is-iso-on", iso.all4);
+  btnAll.textContent = iso.all4 ? "Visas ISO paketas pridėtas ✓" : "Pridėti visą ISO paketą";
+
+  document.getElementById("grid").innerHTML = ADDONS.map(m => {
+    const on = !!state.addonPicks[m.id];
+    const pr = state.addonPrices[m.id] ?? m.price;
+    return `
+      <article class="card ${on ? "is-on" : ""}" data-card="${m.id}">
+        <div>
+          <span class="card-tag ${m.cls}"><span class="dot"></span>${m.tag}</span>
+          <h3>${m.title}</h3>
+          <p class="card-sub">${m.sub}</p>
+          <ul class="mini-pts">${m.pts.map(p => `<li>${p}</li>`).join("")}</ul>
+        </div>
+        <div class="card-foot">
+          <div style="display:flex;align-items:center;gap:5px;">
+            ${m.prefix ? `<span class="meta-line">${m.prefix}</span>` : ""}
+            <input type="number" class="inp-sm" data-pr="${m.id}" step="50" min="0" value="${pr}">
+            <strong style="font-size:14px;">€</strong>
+          </div>
+          <button type="button" class="pick-pill" data-toggle="${m.id}">${on ? "Pasirinkta ✓" : "Pridėti"}</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  updateTray();
+}
+
+function updateTray() {
+  const iso = calcIso();
+  const addons = ADDONS.filter(m => state.addonPicks[m.id]);
+  const count = (iso.all4 ? 1 : iso.picked.length) + addons.length;
+  const addonSum = addons.reduce((s, m) => s + Number(state.addonPrices[m.id] ?? m.price), 0);
+  const extraRaw = iso.price + addonSum;
+  const comboDiscount = iso.all4 ? COMBINED_DISCOUNT : 0;
+  const total = Math.max(0, Number(state.base || 0) + extraRaw - comboDiscount);
+
+  document.getElementById("tBase").textContent = eur(state.base);
+  document.getElementById("tCount").textContent = count;
+  document.getElementById("tExtra").textContent = eur(extraRaw);
+  document.getElementById("tTotal").textContent = eur(total);
+  document.getElementById("tSave").textContent = comboDiscount ? `(įsk. -${eur(comboDiscount)} bendro paketo nuolaida)` : "";
+}
+
+function summaryText() {
+  const iso = calcIso();
+  const addons = ADDONS.filter(m => state.addonPicks[m.id]);
+  const addonSum = addons.reduce((s, m) => s + Number(state.addonPrices[m.id] ?? m.price), 0);
+  const comboDiscount = iso.all4 ? COMBINED_DISCOUNT : 0;
+  const total = Math.max(0, Number(state.base || 0) + iso.price + addonSum - comboDiscount);
+
+  const brandTitle = (window.__GEOLAB_BRAND__?.name || "GeoLab").toUpperCase();
+  return [
+    `${brandTitle} — ORIENTACINĖ SUVESTINĖ (vienkartinė kaina, be PVM)`,
+    "==========================================================",
+    `1 etapas · Bazinė laboratorijos sistema (su protokolo patikra): ${eur(state.base)}`,
+    ...(iso.all4
+      ? [
+          `2 etapas · Bazinis ISO paketas (4 pagrindiniai moduliai): ${eur(ISO_BUNDLE_PRICE)}`,
+          "   – 5 aplankas (tiekėjai), Kalibracijos, Darbuotojų leidimai, Dokumentų ir Excel registras"
+        ]
+      : iso.picked.map(x => `• ISO modulis · ${x.title}: ${eur(x.price)}`)),
+    ...addons.map(m => `• Papildomas priedas · ${m.title}: ${m.prefix || ""}${eur(state.addonPrices[m.id] ?? m.price)}`),
+    ...(comboDiscount ? [`• Bendro paketo nuolaida (Bazė + ISO paketas kartu): -${eur(comboDiscount)}`] : []),
+    "",
+    `Iš viso (vienkartinė kaina, be PVM): ${eur(total)}`
+  ].join("\n");
+}
+
+document.getElementById("btnReset").onclick = () => { state = defaults(); save(); render(); };
+document.getElementById("btnClear").onclick = () => { state.isoPicks = {}; state.addonPicks = {}; save(); render(); };
+document.getElementById("baseInp").oninput = e => { state.base = Math.max(0, Number(e.target.value) || 0); save(); updateTray(); };
+
+document.getElementById("btnPickIsoAll").onclick = () => {
+  const all4 = ISO_CORE.every(x => state.isoPicks[x.id]);
+  state.isoPicks = all4 ? {} : Object.fromEntries(ISO_CORE.map(x => [x.id, true]));
+  save(); render();
+};
+
+document.getElementById("isoCoreList").addEventListener("click", e => {
+  const row = e.target.closest("[data-iso]");
+  if (!row) return;
+  const id = row.dataset.iso;
+  state.isoPicks[id] = !state.isoPicks[id];
+  save(); render();
+});
+
+document.getElementById("grid").addEventListener("click", e => {
+  if (e.target.closest("input")) return;
+  const card = e.target.closest("[data-card]");
+  if (!card) return;
+  const id = card.dataset.card;
+  state.addonPicks[id] = !state.addonPicks[id];
+  save(); render();
+});
+
+document.getElementById("grid").addEventListener("input", e => {
+  const inp = e.target.closest("[data-pr]");
+  if (!inp) return;
+  state.addonPrices[inp.dataset.pr] = Math.max(0, Number(inp.value) || 0);
+  save(); updateTray();
+});
+
+const dlg = document.getElementById("dlg");
+document.getElementById("btnOpen").onclick = () => { document.getElementById("mPre").textContent = summaryText(); dlg.showModal(); };
+document.getElementById("btnClose").onclick = () => dlg.close();
+document.getElementById("btnOk").onclick = () => dlg.close();
+document.getElementById("btnCopy").onclick = async () => {
+  try {
+    await navigator.clipboard.writeText(document.getElementById("mPre").textContent);
+    const b = document.getElementById("btnCopy");
+    b.textContent = "Nukopijuota ✓";
+    setTimeout(() => (b.textContent = "Kopijuoti"), 1600);
+  } catch {}
+};
+
+(function applyBrand() {
+  const b = window.__GEOLAB_BRAND__;
+  if (!b || typeof b !== "object") return;
+  if (b.catalogTitle) document.title = b.catalogTitle;
+  const nameEl = document.getElementById("brandName");
+  if (nameEl && b.name) nameEl.textContent = `${b.name} · Siūlomi sprendimai`;
+  const markEl = document.getElementById("brandMark");
+  if (markEl && b.logoDataUrl) {
+    const img = document.createElement("img");
+    img.className = "brand-logo-img";
+    img.src = b.logoDataUrl;
+    img.alt = b.name || "Laboratorija";
+    markEl.replaceWith(img);
+  }
+})();
+
+render();
+</script>
+</body>
+</html>
