@@ -83,159 +83,67 @@
   .hero-card { padding: 26px 28px; gap: 20px; }
   .hero-card.is-lab { border-color: rgba(37, 99, 235, 0.24); }
 
-  /* =========================================================================
-     EMIL-GRADE GPU-ONLY SELECTABLE CARD SYSTEM
-     Only transform & opacity animate — zero box-shadow paint, zero parent
-     CSS-variable style recalcs on mousemove, silky 120fps everywhere.
-     ========================================================================= */
+  /* Subtle, understated hover (0.3s ease-out) & clean selection — zero overdesign */
   .selectable {
     cursor: pointer; user-select: none;
-    transition: transform 260ms var(--ease-smooth), border-color 220ms ease;
-    will-change: transform;
+    transition: transform 0.3s var(--ease-out), border-color 0.3s ease;
   }
   .selectable.is-iso { border-color: rgba(79, 70, 229, 0.18); }
 
-  /* Pre-rendered elevated hover shadow layer (GPU opacity only) */
+  /* Pre-rendered gentle hover shadow layer (GPU opacity only, 0.3s ease-out) */
   .selectable::after {
     content: "";
     position: absolute; inset: -1.5px; border-radius: inherit; pointer-events: none; z-index: -1;
     box-shadow:
-      0 4px 10px rgba(15, 23, 42, 0.05),
-      0 26px 52px -18px rgba(15, 23, 42, 0.18);
+      0 2px 6px rgba(15, 23, 42, 0.04),
+      0 16px 34px -16px rgba(15, 23, 42, 0.14);
     opacity: 0;
-    transition: opacity 260ms var(--ease-smooth);
+    transition: opacity 0.3s var(--ease-out);
   }
-  /* Pre-rendered selected luminous ring layer (GPU opacity only) */
-  .card-ring {
-    position: absolute; inset: -1.5px; border-radius: inherit; pointer-events: none; z-index: 2;
-    opacity: 0;
-    transition: opacity 240ms var(--ease-out);
-  }
-  .is-iso .card-ring {
-    border: 1.5px solid var(--iso);
-    box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.14), 0 22px 46px -18px rgba(79, 70, 229, 0.26);
-  }
-  .is-addon .card-ring {
-    border: 1.5px solid var(--accent);
-    box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.14), 0 22px 46px -18px rgba(37, 99, 235, 0.24);
-  }
-
-  /* Clipped internal visual layers (top wash tint + spring-damped cursor glow) */
-  .card-fx {
-    position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; z-index: 0;
-  }
-  .card-tint {
-    position: absolute; inset: 0; opacity: 0;
-    transition: opacity 260ms var(--ease-out);
-  }
-  .is-iso .card-tint {
-    background: linear-gradient(180deg, rgba(79, 70, 229, 0.048) 0%, rgba(79, 70, 229, 0.008) 46%, transparent 72%);
-  }
-  .is-addon .card-tint {
-    background: linear-gradient(180deg, rgba(37, 99, 235, 0.045) 0%, rgba(37, 99, 235, 0.008) 50%, transparent 75%);
-  }
-  .card-glow {
-    position: absolute; top: 0; left: 0; width: 420px; height: 420px;
-    margin: -210px 0 0 -210px; border-radius: 50%;
-    opacity: 0; will-change: transform, opacity;
-    transition: opacity 320ms var(--ease-out);
-  }
-  .is-iso .card-glow {
-    background: radial-gradient(circle, rgba(79, 70, 229, 0.105) 0%, rgba(79, 70, 229, 0.03) 40%, transparent 70%);
-  }
-  .is-addon .card-glow {
-    background: radial-gradient(circle, rgba(37, 99, 235, 0.095) 0%, rgba(37, 99, 235, 0.025) 40%, transparent 70%);
-  }
-
-  /* Keep card content cleanly above visual fx layers */
-  .selectable > :not(.card-fx):not(.card-ring) { position: relative; z-index: 1; }
-
   @media (hover: hover) and (pointer: fine) {
     .selectable:hover {
-      transform: translate3d(0, -4px, 0);
+      transform: translate3d(0, -2px, 0);
       border-color: rgba(15, 23, 42, 0.16);
     }
-    .selectable.is-iso:hover { border-color: rgba(79, 70, 229, 0.42); }
-    .selectable.is-addon:hover { border-color: rgba(37, 99, 235, 0.38); }
+    .selectable.is-iso:hover { border-color: rgba(79, 70, 229, 0.40); }
+    .selectable.is-addon:hover { border-color: rgba(37, 99, 235, 0.36); }
     .selectable:hover::after { opacity: 1; }
-    .selectable:hover .card-glow { opacity: 1; }
-    .selectable:hover .sel-ring {
-      border-color: rgba(15, 23, 42, 0.34);
-      transform: scale(1.06);
-    }
-    .selectable.is-iso:hover .sel-ring { border-color: rgba(79, 70, 229, 0.56); }
-    .selectable.is-addon:hover .sel-ring { border-color: rgba(37, 99, 235, 0.52); }
-    .selectable:hover .sel-hover-dot { opacity: 1; transform: scale(1); }
-    .selectable:hover .sel-txt-off { color: var(--ink-2); }
-  }
-
-  /* Responsive tactile press */
-  .selectable:active {
-    transform: translate3d(0, -1px, 0) scale(0.988);
-    transition-duration: 110ms;
   }
   .selectable:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-  /* Selected State (GPU opacity layers melt in cleanly) */
-  .selectable.is-on .card-ring { opacity: 1; }
-  .selectable.is-on .card-tint { opacity: 1; }
+  /* Clean selected state — no re-animation or bounce */
+  .selectable.is-iso.is-on {
+    border-color: var(--iso);
+    background: linear-gradient(180deg, rgba(79, 70, 229, 0.03) 0%, #ffffff 42%);
+  }
+  .selectable.is-addon.is-on {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.03) 0%, #ffffff 45%);
+  }
 
-  /* Tactile Selection Pill + Blur-Bridged Label Swap + Morphing Ring */
+  /* Clean Selection Indicator */
   .card-top-row {
     display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px;
   }
   .sel-pill {
     display: inline-flex; align-items: center; gap: 8px;
-    font-size: 12.5px; font-weight: 600;
+    font-size: 12.5px; font-weight: 600; color: var(--muted);
   }
-  .sel-swap {
-    display: inline-grid; align-items: center; justify-items: end;
-  }
-  .sel-swap > span {
-    grid-area: 1 / 1;
-    transition: opacity 200ms var(--ease-out), transform 220ms var(--ease-out), filter 200ms ease, color 180ms ease;
-  }
-  .sel-txt-off { color: var(--muted); opacity: 1; transform: translateY(0); filter: blur(0); }
-  .sel-txt-on { opacity: 0; transform: translateY(4px); filter: blur(2px); pointer-events: none; }
-  .is-iso .sel-txt-on { color: var(--iso); }
-  .is-addon .sel-txt-on { color: var(--accent); }
-
-  .selectable.is-on .sel-txt-off { opacity: 0; transform: translateY(-4px); filter: blur(2px); }
-  .selectable.is-on .sel-txt-on { opacity: 1; transform: translateY(0); filter: blur(0); }
-
+  .is-iso.is-on .sel-pill { color: var(--iso); }
+  .is-addon.is-on .sel-pill { color: var(--accent); }
   .sel-ring {
-    position: relative; width: 22px; height: 22px; border-radius: 999px;
+    width: 20px; height: 20px; border-radius: 999px;
     border: 1.5px solid var(--line-strong); background: #fff;
     display: grid; place-items: center; flex-shrink: 0;
-    transition: transform 220ms var(--ease-out), border-color 200ms ease;
   }
-  .sel-hover-dot {
-    position: absolute; width: 6px; height: 6px; border-radius: 50%;
-    opacity: 0; transform: scale(0.75);
-    transition: opacity 180ms var(--ease-out), transform 200ms var(--ease-out);
-  }
-  .is-iso .sel-hover-dot { background: rgba(79, 70, 229, 0.35); }
-  .is-addon .sel-hover-dot { background: rgba(37, 99, 235, 0.35); }
-  .selectable.is-on .sel-hover-dot { opacity: 0 !important; }
-
-  /* Colored fill enters from scale(0.88) — never scale(0) */
-  .sel-fill {
-    position: absolute; inset: -1.5px; border-radius: 999px;
-    opacity: 0; transform: scale(0.88);
-    transition: opacity 200ms var(--ease-out), transform 240ms var(--ease-out);
-  }
-  .is-iso .sel-fill { background: var(--iso); box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.45); }
-  .is-addon .sel-fill { background: var(--accent); box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.42); }
-  .selectable.is-on .sel-fill { opacity: 1; transform: scale(1); }
-
-  .sel-ring svg { position: relative; z-index: 1; width: 12px; height: 12px; display: block; }
+  .is-iso.is-on .sel-ring { background: var(--iso); border-color: var(--iso); }
+  .is-addon.is-on .sel-ring { background: var(--accent); border-color: var(--accent); }
+  .sel-ring svg { width: 11px; height: 11px; display: block; opacity: 0; }
+  .selectable.is-on .sel-ring svg { opacity: 1; }
   .sel-ring path {
     fill: none; stroke: #fff; stroke-width: 2.4;
     stroke-linecap: round; stroke-linejoin: round;
-    stroke-dasharray: 18; stroke-dashoffset: 18;
-    transition: stroke-dashoffset 220ms var(--ease-out) 45ms;
   }
-  .selectable.is-on .sel-ring path { stroke-dashoffset: 0; }
 
   /* Included badge on Base card */
   .inc-pill {
@@ -408,14 +316,12 @@
 
       <!-- PACKAGE 2: SINGLE UNIFIED ISO PACKAGE (Selectable) -->
       <article class="hero-card selectable is-iso" id="isoCard" tabindex="0" role="checkbox" aria-checked="false" data-select="iso">
-        <div class="card-fx" aria-hidden="true"><div class="card-tint"></div><div class="card-glow"></div></div>
-        <div class="card-ring" aria-hidden="true"></div>
         <div>
           <div class="card-top-row">
             <div class="kicker k-iso"><span class="dot"></span> 2 PAKETAS · ISO KOKYBĖS TVARKA</div>
             <span class="sel-pill">
-              <span class="sel-swap"><span class="sel-txt-off">Pasirinkti</span><span class="sel-txt-on">Pasirinkta</span></span>
-              <span class="sel-ring" aria-hidden="true"><span class="sel-hover-dot"></span><span class="sel-fill"></span><svg viewBox="0 0 14 14"><path d="M3 7.4L5.7 10.1L11 4.4"/></svg></span>
+              <span class="sel-txt">Pasirinkti</span>
+              <span class="sel-ring" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M3 7.4L5.7 10.1L11 4.4"/></svg></span>
             </span>
           </div>
           <h2>Kokybės dokumentų sistema be kopijavimo</h2>
@@ -443,14 +349,12 @@
     </div>
     <section class="grid-2">
       <article class="card selectable is-addon" tabindex="0" role="checkbox" aria-checked="false" data-select="accounting" data-price="500">
-        <div class="card-fx" aria-hidden="true"><div class="card-tint"></div><div class="card-glow"></div></div>
-        <div class="card-ring" aria-hidden="true"></div>
         <div>
           <div class="card-top-row">
             <span class="card-tag k-lab"><span class="dot"></span>Tik vadovei · Privatu</span>
             <span class="sel-pill">
-              <span class="sel-swap"><span class="sel-txt-off">Pasirinkti</span><span class="sel-txt-on">Pasirinkta</span></span>
-              <span class="sel-ring" aria-hidden="true"><span class="sel-hover-dot"></span><span class="sel-fill"></span><svg viewBox="0 0 14 14"><path d="M3 7.4L5.7 10.1L11 4.4"/></svg></span>
+              <span class="sel-txt">Pasirinkti</span>
+              <span class="sel-ring" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M3 7.4L5.7 10.1L11 4.4"/></svg></span>
             </span>
           </div>
           <h3>Darbų aktavimas, pajamos ir išlaidos</h3>
@@ -467,14 +371,12 @@
       </article>
 
       <article class="card selectable is-addon" tabindex="0" role="checkbox" aria-checked="false" data-select="extra_tests" data-price="550">
-        <div class="card-fx" aria-hidden="true"><div class="card-tint"></div><div class="card-glow"></div></div>
-        <div class="card-ring" aria-hidden="true"></div>
         <div>
           <div class="card-top-row">
             <span class="card-tag k-lab"><span class="dot"></span>Laboratorija · Bandymų plėtra</span>
             <span class="sel-pill">
-              <span class="sel-swap"><span class="sel-txt-off">Pasirinkti</span><span class="sel-txt-on">Pasirinkta</span></span>
-              <span class="sel-ring" aria-hidden="true"><span class="sel-hover-dot"></span><span class="sel-fill"></span><svg viewBox="0 0 14 14"><path d="M3 7.4L5.7 10.1L11 4.4"/></svg></span>
+              <span class="sel-txt">Pasirinkti</span>
+              <span class="sel-ring" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M3 7.4L5.7 10.1L11 4.4"/></svg></span>
             </span>
           </div>
           <h3>Papildomi bandymai (lazeris + 2–3 žurnalai)</h3>
@@ -549,37 +451,7 @@ const state = (() => {
   return { iso: false, addons: {} };
 })();
 
-const animState = { iso: 0, extra: 0, total: BASE_PRICE };
-const rafIds = {};
-
-function animateNumber(el, key, target) {
-  if (rafIds[key]) { cancelAnimationFrame(rafIds[key]); rafIds[key] = 0; }
-  const from = animState[key];
-  if (reduceMotion || from === target) {
-    animState[key] = target;
-    el.textContent = eur(target);
-    return;
-  }
-  const start = performance.now();
-  const dur = 190;
-  function step(now) {
-    const t = Math.min(1, (now - start) / dur);
-    const eased = 1 - Math.pow(1 - t, 3);
-    const cur = Math.round(from + (target - from) * eased);
-    animState[key] = cur;
-    el.textContent = eur(cur);
-    if (t < 1) {
-      rafIds[key] = requestAnimationFrame(step);
-    } else {
-      animState[key] = target;
-      el.textContent = eur(target);
-      rafIds[key] = 0;
-    }
-  }
-  rafIds[key] = requestAnimationFrame(step);
-}
-
-function syncUI(instant) {
+function syncUI() {
   let extraSum = 0;
   let extraCount = 0;
 
@@ -588,6 +460,8 @@ function syncUI(instant) {
     const on = id === "iso" ? state.iso : !!state.addons[id];
     el.classList.toggle("is-on", on);
     el.setAttribute("aria-checked", String(on));
+    const txt = el.querySelector(".sel-txt");
+    if (txt) txt.textContent = on ? "Pasirinkta" : "Pasirinkti";
     if (id !== "iso" && on) {
       extraSum += Number(el.dataset.price || 0);
       extraCount++;
@@ -606,16 +480,9 @@ function syncUI(instant) {
   elExtra.className = extraSum > 0 ? "extra-val" : "dim";
   lblExtra.textContent = extraCount > 0 ? `Papildomai (${extraCount})` : "Papildomai";
 
-  if (instant) {
-    animState.iso = isoSum; animState.extra = extraSum; animState.total = total;
-    elIso.textContent = eur(isoSum);
-    elExtra.textContent = eur(extraSum);
-    elTotal.textContent = eur(total);
-  } else {
-    animateNumber(elIso, "iso", isoSum);
-    animateNumber(elExtra, "extra", extraSum);
-    animateNumber(elTotal, "total", total);
-  }
+  elIso.textContent = eur(isoSum);
+  elExtra.textContent = eur(extraSum);
+  elTotal.textContent = eur(total);
 }
 
 function toggleCard(el) {
@@ -623,46 +490,7 @@ function toggleCard(el) {
   if (id === "iso") state.iso = !state.iso;
   else state.addons[id] = !state.addons[id];
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
-  syncUI(false);
-}
-
-/* Spring-damped GPU cursor glow (strictly translate3d on leaf element, zero parent CSS vars) */
-function attachGlow(card) {
-  if (reduceMotion) return;
-  const glow = card.querySelector(".card-glow");
-  if (!glow) return;
-  let tx = 0, ty = 0, cx = 0, cy = 0, active = false, raf = 0;
-
-  function tick() {
-    cx += (tx - cx) * 0.14;
-    cy += (ty - cy) * 0.14;
-    glow.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
-    if (active || Math.abs(tx - cx) > 0.35 || Math.abs(ty - cy) > 0.35) {
-      raf = requestAnimationFrame(tick);
-    } else {
-      raf = 0;
-    }
-  }
-
-  card.addEventListener("pointerenter", e => {
-    if (e.pointerType !== "mouse") return;
-    const rect = card.getBoundingClientRect();
-    tx = cx = e.clientX - rect.left;
-    ty = cy = e.clientY - rect.top;
-    glow.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
-    active = true;
-    if (!raf) raf = requestAnimationFrame(tick);
-  });
-
-  card.addEventListener("pointermove", e => {
-    if (e.pointerType !== "mouse") return;
-    const rect = card.getBoundingClientRect();
-    tx = e.clientX - rect.left;
-    ty = e.clientY - rect.top;
-    if (!raf) raf = requestAnimationFrame(tick);
-  });
-
-  card.addEventListener("pointerleave", () => { active = false; });
+  syncUI();
 }
 
 document.querySelectorAll("[data-select]").forEach(el => {
@@ -670,7 +498,6 @@ document.querySelectorAll("[data-select]").forEach(el => {
   el.addEventListener("keydown", e => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleCard(el); }
   });
-  attachGlow(el);
 });
 
 (function applyBrand() {
@@ -689,7 +516,7 @@ document.querySelectorAll("[data-select]").forEach(el => {
   }
 })();
 
-syncUI(true);
+syncUI();
 </script>
 </body>
 </html>
