@@ -500,24 +500,33 @@ const state = (() => {
 })();
 
 const animState = { iso: 0, extra: 0, total: BASE_PRICE };
+const rafIds = {};
 
 function animateNumber(el, key, target) {
+  if (rafIds[key]) { cancelAnimationFrame(rafIds[key]); rafIds[key] = 0; }
   const from = animState[key];
-  animState[key] = target;
   if (reduceMotion || from === target) {
+    animState[key] = target;
     el.textContent = eur(target);
     return;
   }
   const start = performance.now();
-  const dur = 240;
+  const dur = 190;
   function step(now) {
     const t = Math.min(1, (now - start) / dur);
     const eased = 1 - Math.pow(1 - t, 3);
-    el.textContent = eur(Math.round(from + (target - from) * eased));
-    if (t < 1) requestAnimationFrame(step);
-    else el.textContent = eur(target);
+    const cur = Math.round(from + (target - from) * eased);
+    animState[key] = cur;
+    el.textContent = eur(cur);
+    if (t < 1) {
+      rafIds[key] = requestAnimationFrame(step);
+    } else {
+      animState[key] = target;
+      el.textContent = eur(target);
+      rafIds[key] = 0;
+    }
   }
-  requestAnimationFrame(step);
+  rafIds[key] = requestAnimationFrame(step);
 }
 
 function syncUI(instant) {
