@@ -202,7 +202,7 @@
 
   <main class="wrap">
     <h1>Viskas vienoje vietoje — be rankinio perrašinėjimo</h1>
-    <p class="lead">Paprastas pasirinkimas: pradedate nuo <strong>1 paketo</strong> (kasdienis laboratorijos darbas) arba iškart sujungiate abu su <strong>2 paketu</strong> (ISO kokybės tvarka).</p>
+    <p class="lead">Šis pasiūlymas apjungia kasdienį laboratorijos darbą (užsakymus, žurnalus, jūsų Excel skaičiuokles ir apkrovos vaizdą) bei ISO kokybės tvarką vienoje paprastoje sistemoje. Tikslas — sumažinti rankinį perrašinėjimą, apsaugoti duomenis nuo klaidų ir sutaupyti laiko ruošiantis auditams.</p>
 
     <!-- TWO MAIN PACKAGES -->
     <section class="pair">
@@ -214,8 +214,8 @@
           <p class="hero-sub">Viskas valdoma vienoje programoje, o jūsų patvirtintas Excel šablonas su grafikais lieka toks pat.</p>
           <ul class="pts">
             <li><span class="chk">✓</span> <span><strong>Užsakymo įkėlimas ir atnaujinimas (drag &amp; drop):</strong> paraiška nuskaitoma 1 kartą, o atėjus patikslintam užsakymui — jau atlikti bandymai išsaugomi, o nauji pridedami automatiškai.</span></li>
-            <li><span class="chk">✓</span> <span><strong>Skaitmeniniai svėrimų žurnalai (Nr. 1, 2 ir 4):</strong> svoris iš svarstyklių (USB) patenka prie tikslaus mėginio ir indelio.</span></li>
-            <li><span class="chk">✓</span> <span><strong>Automatinis perkėlimas į jūsų Excel („OneDrive“):</strong> pildome tik įvesties langelius — jūsų formulės ir grafikai lieka nepaliesti.</span></li>
+            <li><span class="chk">✓</span> <span><strong>Skaitmeniniai svėrimų žurnalai (Nr. 1, 2 ir 4):</strong> patogus svorių suvedimas prie tikslaus mėginio ir indelio be popierinių žurnalų — o ten, kur bus naudinga, papildomai galėsime kartu įvertinti ir tiesioginį duomenų perkėlimą iš prietaisų.</span></li>
+            <li><span class="chk">✓</span> <span><strong>Automatinis perkėlimas į jūsų Excel („OneDrive“):</strong> sistema pati surašo svėrimo duomenis į jūsų įprastą Excel failą — visos jūsų formulės ir grafikai lieka tokie patys.</span></li>
             <li><span class="chk">✓</span> <span><strong>Grįžtamoji Excel patikra ir visi failai vienoje vietoje:</strong> po Excel skaičiavimo programa patikrina sugeneruotus rezultatus (ar nieko netrūksta, nėra klaidų) ir pritraukia failus į projekto kortelę.</span></li>
             <li><span class="chk">✓</span> <span><strong>Prietaisai, istorija ir protokolų versijos (V1 / V2):</strong> matoma, kas ir kuriomis svarstyklėmis svėrė, senos protokolo versijos išsaugomos su priežastimi + validavimo patikra su tikrais darbais.</span></li>
             <li><span class="chk">✓</span> <span><strong>Laboratorijos apkrova ir orientaciniai terminai:</strong> paprastas, vienu žvilgsniu suprantamas esamo užimtumo ir tyrimų apimčių vaizdas — net kalbant su klientu telefonu per kelias sekundes padeda įsivertinti realią apkrovą ir apytiksliai pasakyti naujo užsakymo laiką (bei matyti pagrindinius užsakovus).</span></li>
@@ -245,9 +245,8 @@
         </div>
         <div class="foot-bar">
           <div class="price-hero">
-            <strong>3 900 €</strong>
+            <strong>3 500 €</strong>
             <span class="meta-line">be PVM · ~2–3 sav.</span>
-            <span class="bundle-badge">Abu kartu: 10 400 € (-500 €)</span>
           </div>
           <button type="button" class="pick-pill" id="btnPickIso">Pridėti ISO paketą</button>
         </div>
@@ -268,8 +267,8 @@
         <span>50 % išankstinis mokėjimas pradedant darbus, 50 % po sistemos pridavimo ir patikros. Vienkartinės kainos be PVM, be mėnesinių prenumeratų.</span>
       </div>
       <div class="term-box">
-        <strong>Papildomi darbai ir pakeitimai: 55 €/val.</strong>
-        <span>Visus papildomus pageidavimus aptariame atskirai — didesniems darbams pateikiame fiksuotą kainą iš anksto, o smulkiems pakeitimams taikomas 55 €/val. (be PVM) įkainis.</span>
+        <strong>Papildomi darbai ir pakeitimai: 60 €/val.</strong>
+        <span>Visus papildomus pageidavimus aptariame atskirai — didesniems darbams pateikiame fiksuotą kainą iš anksto, o smulkiems pakeitimams taikomas 60 €/val. (be PVM) įkainis.</span>
       </div>
       <div class="term-box">
         <strong>Jūsų Excel ir galutinis tvirtinimas</strong>
@@ -313,10 +312,10 @@
 </dialog>
 
 <script>
-const KEY = "geolab_catalog_clean_v10";
+const KEY = "geolab_catalog_clean_v11";
 const BASE_PRICE = 7000;
-const ISO_PRICE = 3900;
-const COMBINED_DISCOUNT = 500; // 7000 + 3900 = 10900 -> 10400 €
+const ISO_PRICE = 3500;
+const COMBINED_DISCOUNT = 0;
 
 const ADDONS = [
   {
@@ -419,7 +418,7 @@ function summaryText() {
     "",
     `Iš viso (be PVM): ${eur(total)}`,
     `Atsiskaitymas: 50 % išankstinis (${eur(half)}) · 50 % po pridavimo (${eur(total - half)})`,
-    "Papildomi smulkūs pakeitimai po pridavimo: 55 €/val. (be PVM, suderinus iš anksto)."
+    "Papildomi smulkūs pakeitimai po pridavimo: 60 €/val. (be PVM, suderinus iš anksto)."
   ].join("\n");
 }
 
