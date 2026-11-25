@@ -370,8 +370,8 @@ const BASE_PRICE = 6500;
 const ISO_CORE = [
   {
     id: "iso_f5",
-    title: "5 aplankas — tiekėjų vertinimas",
-    desc: "Atskiria tyrimams svarbius tiekėjus nuo ūkinių pirkimų, nebekopijuoja metų, pats suskaičiuoja balą ir sprendimą.",
+    title: "5 aplankas — tiekėjų ir pirkimų vertinimas (F1 / F2 / F3)",
+    desc: "Sujungia jūsų 3 lenteles (pirkimų planą, pirminį ir metinį 1–5 balų vertinimą): atskiria tyrimams svarbius tiekėjus nuo ūkinių pirkimų, nebekopijuoja metų, pats suskaičiuoja balą ir sprendimą auditui.",
     price: 1900
   },
   {
@@ -388,8 +388,8 @@ const ISO_CORE = [
   },
   {
     id: "iso_docs",
-    title: "Dokumentų ir Excel registras",
-    desc: "Peržiūros priminimai, apsauga nuo pasenusio Excel šablono, paruoštas metinis skaičiuoklių patikrinimas.",
+    title: "Dokumentų ir skaičiuoklių registras",
+    desc: "Visos procedūros (~100+) ir skaičiuoklės vienoje vietoje: peržiūros priminimai, paruoštas metinis skaičiuoklių patikrinimo žurnalas ir garantija, kad naujas darbas visada pradedamas nuo švarios galiojančios šablono kopijos.",
     price: 950
   }
 ];
@@ -399,19 +399,19 @@ const COMBINED_DISCOUNT = 500;
 const ADDONS = [
   {
     id: "accounting",
-    tag: "Vadovei · Valdymas",
+    tag: "Tik vadovei · Privatu",
     cls: "k-lab",
     title: "Darbų aktavimas, pajamos ir išlaidos",
-    sub: "Privati mėnesio finansų suvestinė (matoma tik vadovei).",
-    pts: ["Mėnesio pajamos už atliktus tyrimus pagal užsakovus", "Išlaidų suvedimas (kalibracijos, įranga, mokymai, priemonės)", "Automatinės sumos, rūšiavimas ir eksportas į Excel"],
+    sub: "Privati mėnesio suvestinė — jūsų failo įkėlimas (drag & drop), be rankinio pildymo.",
+    pts: ["Įkeliate savo Excel failą bet kurią dieną (nelaikoma bendrame diske)", "Įkėlus kelis kartus per mėnesį — einamasis mėnuo atnaujinamas pagal datas", "Automatinė pajamų, išlaidų (kalibracijos, mokymai, įranga) statistika ir rūšiavimas"],
     price: 500
   },
   {
     id: "workload",
-    tag: "Vadovei · Planavimas",
+    tag: "Laboratorija · Planavimas",
     cls: "k-lab",
     title: "Laboratorijos apkrova ir terminų prognozė",
-    sub: "Per 5 sek. matosi, kada galima priimti ir užbaigti naują užsakymą.",
+    sub: "Per 5 sek. matosi, kada laboratorija gali priimti ir užbaigti naują užsakymą.",
     pts: ["Gyva apkrova pagal tyrimų sudėtingumo taškus ir realų greitį", "Pradžios ir pabaigos prognozė (~80–90 % tikslumu) skambinant klientui", "Pagrindinių klientų ir daugiausiai laiko užimančių tyrimų suvestinė"],
     price: 600
   },
