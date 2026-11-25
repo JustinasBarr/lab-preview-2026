@@ -162,17 +162,6 @@
   .st b { font-size: 19px; font-variant-numeric: tabular-nums; }
   .st b.blue { color: #60a5fa; }
   .st b.green { color: #34d399; }
-  .tray-save { font-size: 12px; color: #34d399; font-weight: 560; }
-  .btn-main { background: #2563eb; color: #fff; border: 0; padding: 9px 16px; border-radius: 10px; font: 600 13.5px/1 inherit; cursor: pointer; }
-  .btn-clear { background: rgba(255,255,255,0.08); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.16); padding: 9px 13px; border-radius: 10px; font: 550 13px/1 inherit; cursor: pointer; }
-
-  dialog { border: 0; border-radius: 18px; padding: 0; max-width: 640px; width: calc(100% - 32px); box-shadow: 0 28px 64px rgba(15,23,42,0.28); }
-  dialog::backdrop { background: rgba(15,23,42,0.42); backdrop-filter: blur(4px); }
-  .m-head { padding: 18px 22px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
-  .m-head h2 { margin: 0; font-size: 17px; }
-  .m-body { padding: 18px 22px; max-height: 68vh; overflow: auto; }
-  .m-pre { background: var(--soft); border-radius: 12px; padding: 14px; font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; margin: 0; }
-  .m-foot { padding: 14px 22px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 10px; }
 
   @media (max-width: 900px) { .pair, .grid-2, .terms { grid-template-columns: 1fr; } }
   @media (max-width: 600px) { .wrap, .topbar-in, .tray-in { padding-left: 16px; padding-right: 16px; } h1 { font-size: 25px; } }
@@ -284,38 +273,15 @@
     <div class="stats">
       <div class="st"><span>1 paketas (Bazė)</span><b id="tBase">7 000 €</b></div>
       <div class="st"><span>Papildomai (<span id="tCount">0</span>)</span><b class="blue" id="tExtra">0 €</b></div>
-      <div class="st">
-        <span>Iš viso (vienkartinė, be PVM)</span>
-        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
-          <b class="green" id="tTotal">7 000 €</b>
-          <span class="tray-save" id="tSave"></span>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;">
-      <button type="button" class="btn-clear" id="btnClear">Išvalyti</button>
-      <button type="button" class="btn-main" id="btnOpen">Suvestinė →</button>
+      <div class="st"><span>Iš viso (vienkartinė, be PVM)</span><b class="green" id="tTotal">7 000 €</b></div>
     </div>
   </div>
 </div>
-
-<dialog id="dlg">
-  <div class="m-head">
-    <h2>Pasirinkimų suvestinė</h2>
-    <button type="button" class="btn-ghost" id="btnClose">Uždaryti</button>
-  </div>
-  <div class="m-body"><pre class="m-pre" id="mPre"></pre></div>
-  <div class="m-foot">
-    <button type="button" class="btn-ghost" id="btnCopy">Kopijuoti</button>
-    <button type="button" class="btn-main" id="btnOk">Gerai</button>
-  </div>
-</dialog>
 
 <script>
 const KEY = "geolab_catalog_clean_v11";
 const BASE_PRICE = 7000;
 const ISO_PRICE = 3500;
-const COMBINED_DISCOUNT = 0;
 
 const ADDONS = [
   {
@@ -390,39 +356,14 @@ function updateTray() {
   const addons = ADDONS.filter(m => state.addonPicks[m.id]);
   const count = (state.pickIso ? 1 : 0) + addons.length;
   const extraRaw = (state.pickIso ? ISO_PRICE : 0) + addons.reduce((s, m) => s + m.price, 0);
-  const discount = state.pickIso ? COMBINED_DISCOUNT : 0;
-  const total = Math.max(0, BASE_PRICE + extraRaw - discount);
+  const total = BASE_PRICE + extraRaw;
 
   document.getElementById("tBase").textContent = eur(BASE_PRICE);
   document.getElementById("tCount").textContent = count;
   document.getElementById("tExtra").textContent = eur(extraRaw);
   document.getElementById("tTotal").textContent = eur(total);
-  document.getElementById("tSave").textContent = discount ? `(įsk. -${eur(discount)} bendro paketo nuolaida)` : "";
 }
 
-function summaryText() {
-  const addons = ADDONS.filter(m => state.addonPicks[m.id]);
-  const extraRaw = (state.pickIso ? ISO_PRICE : 0) + addons.reduce((s, m) => s + m.price, 0);
-  const discount = state.pickIso ? COMBINED_DISCOUNT : 0;
-  const total = Math.max(0, BASE_PRICE + extraRaw - discount);
-  const half = Math.round(total / 2);
-
-  const brandTitle = (window.__GEOLAB_BRAND__?.name || "GeoLab").toUpperCase();
-  return [
-    `${brandTitle} — PASIŪLYMO SUVESTINĖ (vienkartinė kaina, be PVM)`,
-    "==========================================================",
-    `1 paketas · Laboratorijos sistema: ${eur(BASE_PRICE)}`,
-    ...(state.pickIso ? [`2 paketas · ISO kokybės tvarka (5 aplankas, kalibracijos, leidimai, registras): ${eur(ISO_PRICE)}`] : []),
-    ...addons.map(m => `• Papildomas sprendimas · ${m.title}: ${m.prefix ? m.prefix + " " : ""}${eur(m.price)}`),
-    ...(discount ? [`• Bendro paketo nuolaida (1 + 2 paketai kartu): -${eur(discount)}`] : []),
-    "",
-    `Iš viso (be PVM): ${eur(total)}`,
-    `Atsiskaitymas: 50 % išankstinis (${eur(half)}) · 50 % po pridavimo (${eur(total - half)})`,
-    "Papildomi smulkūs pakeitimai po pridavimo: 60 €/val. (be PVM, suderinus iš anksto)."
-  ].join("\n");
-}
-
-document.getElementById("btnClear").onclick = () => { state = defaults(); save(); render(); };
 document.getElementById("isoCard").onclick = () => { state.pickIso = !state.pickIso; save(); render(); };
 document.getElementById("grid").addEventListener("click", e => {
   const card = e.target.closest("[data-card]");
@@ -431,19 +372,6 @@ document.getElementById("grid").addEventListener("click", e => {
   state.addonPicks[id] = !state.addonPicks[id];
   save(); render();
 });
-
-const dlg = document.getElementById("dlg");
-document.getElementById("btnOpen").onclick = () => { document.getElementById("mPre").textContent = summaryText(); dlg.showModal(); };
-document.getElementById("btnClose").onclick = () => dlg.close();
-document.getElementById("btnOk").onclick = () => dlg.close();
-document.getElementById("btnCopy").onclick = async () => {
-  try {
-    await navigator.clipboard.writeText(document.getElementById("mPre").textContent);
-    const b = document.getElementById("btnCopy");
-    b.textContent = "Nukopijuota ✓";
-    setTimeout(() => (b.textContent = "Kopijuoti"), 1600);
-  } catch {}
-};
 
 (function applyBrand() {
   const b = window.__GEOLAB_BRAND__;
